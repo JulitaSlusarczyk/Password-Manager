@@ -6,8 +6,8 @@ Dialog::Dialog(QWidget *parent) :
     ui(new Ui::Dialog)
 {
     ui->setupUi(this);
-    ui->podaj_haslo->setEchoMode(QLineEdit::Password);
-    this->setWindowTitle("Manager haseł");
+    ui->enter_pwrd->setEchoMode(QLineEdit::Password);
+    this->setWindowTitle("Password Manager");
 }
 
 Dialog::~Dialog()
@@ -17,9 +17,9 @@ Dialog::~Dialog()
 
 void Dialog::on_pushButton_clicked()
 {
-    if(ui->podaj_haslo->text()!="haslo")
+    if(ui->enter_pwrd->text()!="haslo")
     {
-        ui->zle_haslo->setText("Złe hasło");
+        ui->wrong_label->setText("Wrong password!");
     }
     else
     {
