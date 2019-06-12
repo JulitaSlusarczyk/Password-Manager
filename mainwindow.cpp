@@ -1,3 +1,8 @@
+//
+//  Password Manager
+//  by Julita Ślusarczyk
+//
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -7,6 +12,7 @@
 #include <QTextStream>
 
 QList <QString> sites;
+QList <QString> logins;
 QList <QString> passwords;
 bool edited = false;
 char arr[62]={'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
@@ -16,8 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    wczytaj();
-    wczytaj2();
+    load();
     this->setWindowTitle("Password Manager");
     ui->lista_hasel->setCurrentRow(0);
 }
@@ -27,7 +32,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::wczytaj()
+void MainWindow::load()
 {
     QFile *f = new QFile("witryny.txt");
     if(!f->open(QIODevice::ReadOnly))
@@ -35,28 +40,25 @@ void MainWindow::wczytaj()
     QTextStream textStream(f);
     while(!textStream.atEnd())
     {
-        QString h = textStream.readLine();
-        if(h!="")
+        QString readfLine = textStream.readLine();
+        if(readfLine!="")
         {
-            sites << h;
-            ui->lista_hasel->addItem(h);
+            sites << readfLine;
+            ui->lista_hasel->addItem(readfLine);
         }
     }
     f->close();
-}
 
-void MainWindow::wczytaj2()
-{
     QFile *g = new QFile("hasla.txt");
     if(!g->open(QIODevice::ReadOnly))
         qFatal("Couldn't open that file");
     QTextStream textStream2(g);
     while(!textStream2.atEnd())
     {
-        QString hh = textStream2.readLine();
-        if(hh!="" || hh!=" ")
+        QString readgLine = textStream2.readLine();
+        if(readgLine!="")
         {
-            passwords << hh;
+            passwords << readgLine;
         }
     }
     g->close();
@@ -71,7 +73,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
         QPushButton *noButton = msgBox.addButton(QMessageBox::No);
         QPushButton *yesButton = msgBox.addButton(QMessageBox::Yes);
         msgBox.setDefaultButton(QMessageBox::Cancel);
-        msgBox.setText("Zmiany nie zostały zapisane. Zapisać i kontynuować?");
+        msgBox.setText("Have unsaved changes. Save and exit?");
         msgBox.exec();
 
         if (msgBox.clickedButton() == yesButton)
@@ -98,7 +100,7 @@ void MainWindow::on_dodaj_clicked()
 {
     if(ui->witryna->text()=="" || ui->haslo->text()=="")
     {
-        ui->puste->setText("Fill all fields!");
+        ui->info2_label->setText("Fill all fields!");
     }
     else
     {
@@ -113,24 +115,24 @@ void MainWindow::on_dodaj_clicked()
     }
 }
 
-void MainWindow::on_losuj_haslo_clicked()
+void MainWindow::on_random_pwrd_clicked()
 {
-    QString haslo;
+    QString pwrd;
     for (int i; i<8; i++)
     {
-        haslo+=losuj();
+        pwrd+=rand_pwrd();
     }
-    ui->haslo->setText(haslo);
+    ui->random_pwrd_edit->setText(pwrd);
 }
 
-char MainWindow::losuj()
+char MainWindow::rand_pwrd()
 {
     int l = rand() % 62;
     char z = arr[l];
     return z;
 }
 
-void MainWindow::on_usun_clicked()
+void MainWindow::on_delete_one_clicked()
 {
     foreach (QListWidgetItem *item, ui->lista_hasel->selectedItems())
         delete item;
@@ -141,7 +143,7 @@ void MainWindow::on_usun_clicked()
     edited = true;
 }
 
-void MainWindow::on_usun_wszystko_clicked()
+void MainWindow::on_delete_all_clicked()
 {
     ui->lista_hasel->clear();
     sites.clear();
@@ -150,29 +152,29 @@ void MainWindow::on_usun_wszystko_clicked()
     edited = true;
 }
 
-void MainWindow::on_edytuj_clicked()
+void MainWindow::on_edit_button_clicked()
 {
     int ak = ui->lista_hasel->currentRow();
-    if(ui->edytuj_haslo->text()!="")
+    if(ui->edit_pwrd->text()!="")
     {
-        passwords[ak] = ui->edytuj_haslo->text();
+        passwords[ak] = ui->edit_pwrd->text();
         ui->info_label->setText("Edited!");
         edited = true;
     }
 }
 
-void MainWindow::on_pokaz_haslo_clicked()
+void MainWindow::on_show_pwrd_clicked()
 {
-    if(ui->pokaz_haslo->text()=="Show password")
+    if(ui->show_pwrd->text()=="Show password")
     {
         int re = ui->lista_hasel->currentRow();
-        ui->edytuj_haslo->setText(passwords[re]);
-        ui->pokaz_haslo->setText("Hide password");
+        ui->edit_pwrd->setText(passwords[re]);
+        ui->show_pwrd->setText("Hide password");
     }
     else
     {
-        ui->edytuj_haslo->setText("");
-        ui->pokaz_haslo->setText("Show password");
+        ui->edit_pwrd->setText("");
+        ui->show_pwrd->setText("Show password");
     }
 }
 
@@ -240,8 +242,8 @@ void MainWindow::on_nizej_clicked()
 
 void MainWindow::on_lista_hasel_itemSelectionChanged()
 {
-    ui->edytuj_haslo->setText("");
-    ui->pokaz_haslo->setText("Pokaż hasło");
-    ui->puste->setText("");
+    ui->edit_pwrd->setText("");
+    ui->show_pwrd->setText("Show password");
+    ui->info2_label->setText("");
     ui->info_label->setText("");
 }

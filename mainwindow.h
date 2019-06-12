@@ -14,25 +14,13 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    char losuj();
-    void wczytaj();
-    void wczytaj2();
-    void pytanie();
+    char rand_pwrd();
+    void load();
 
 public slots:
     void closeEvent(QCloseEvent *e);
 private slots:
     void on_dodaj_clicked();
-
-    void on_losuj_haslo_clicked();
-
-    void on_usun_clicked();
-
-    void on_usun_wszystko_clicked();
-
-    void on_edytuj_clicked();
-
-    void on_pokaz_haslo_clicked();
 
     void on_zapisz_clicked();
 
@@ -41,6 +29,16 @@ private slots:
     void on_nizej_clicked();
 
     void on_lista_hasel_itemSelectionChanged();
+
+    void on_edit_button_clicked();
+
+    void on_random_pwrd_clicked();
+
+    void on_show_pwrd_clicked();
+
+    void on_delete_one_clicked();
+
+    void on_delete_all_clicked();
 
 private:
     Ui::MainWindow *ui;
