@@ -9,6 +9,7 @@
 #include <QCloseEvent>
 #include <QFile>
 #include <QMessageBox>
+#include <QString>
 #include <QTextStream>
 
 QList <QString> sites;
@@ -23,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     load();
+    load2();
+    load3();
     this->setWindowTitle("Password Manager");
     ui->lista_hasel->setCurrentRow(0);
 }
@@ -48,7 +51,9 @@ void MainWindow::load()
         }
     }
     f->close();
-
+}
+void MainWindow::load2()
+{
     QFile *g = new QFile("hasla.txt");
     if(!g->open(QIODevice::ReadOnly))
         qFatal("Couldn't open that file");
@@ -62,6 +67,22 @@ void MainWindow::load()
         }
     }
     g->close();
+}
+void MainWindow::load3()
+{
+    QFile *h = new QFile("logins.txt");
+    if(!h->open(QIODevice::ReadOnly))
+        qFatal("Couldn't open that file");
+    QTextStream textStream3(h);
+    while(!textStream3.atEnd())
+    {
+        QString readhLine = textStream3.readLine();
+        if(readhLine!="")
+        {
+            logins << readhLine;
+        }
+    }
+    h->close();
 }
 
 void MainWindow::closeEvent(QCloseEvent *e)
@@ -118,7 +139,8 @@ void MainWindow::on_dodaj_clicked()
 void MainWindow::on_random_pwrd_clicked()
 {
     QString pwrd;
-    for (int i; i<8; i++)
+    int char_pwrd=ui->rand_pwrd_char->currentIndex()+8;
+    for (int i; i<char_pwrd; i++)
     {
         pwrd+=rand_pwrd();
     }
@@ -138,6 +160,7 @@ void MainWindow::on_delete_one_clicked()
         delete item;
     int er = ui->lista_hasel->currentRow();
     sites.removeOne(sites[ui->lista_hasel->currentRow()]);
+    logins.removeOne(passwords[ui->lista_hasel->currentRow()]);
     passwords.removeOne(passwords[ui->lista_hasel->currentRow()]);
     ui->info_label->setText("Deleted!");
     edited = true;
@@ -201,6 +224,17 @@ void MainWindow::on_zapisz_clicked()
         textStream2<<"\r\n";
     }
     g->close();
+
+    QFile *h = new QFile("logins.txt");
+    if(!h->open(QIODevice::WriteOnly))
+        qFatal("Couldn't open that file");
+    QTextStream textStream3(h);
+    for(int n=0; n<logins.size();n++)
+    {
+        textStream3<<logins[n];
+        textStream3<<"\r\n";
+    }
+    h->close();
     ui->info_label->setText("Saved!");
     edited = false;
 }
@@ -242,6 +276,7 @@ void MainWindow::on_nizej_clicked()
 
 void MainWindow::on_lista_hasel_itemSelectionChanged()
 {
+    ui->edit_login->setText(logins[ui->lista_hasel->currentRow()]);
     ui->edit_pwrd->setText("");
     ui->show_pwrd->setText("Show password");
     ui->info2_label->setText("");

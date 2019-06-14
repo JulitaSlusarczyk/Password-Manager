@@ -15,7 +15,7 @@ Dialog::~Dialog()
     delete ui;
 }
 
-void Dialog::on_pushButton_clicked()
+void Dialog::on_login_button_clicked()
 {
     if(ui->enter_pwrd->text()!="haslo")
     {
