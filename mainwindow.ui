@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QListWidget" name="lista_hasel">
+   <widget class="QListWidget" name="sites_list">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -44,7 +44,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="dodaj">
+   <widget class="QPushButton" name="add_button">
     <property name="geometry">
      <rect>
       <x>180</x>
@@ -184,7 +184,7 @@
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="wyzej">
+   <widget class="QPushButton" name="up_button">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -197,7 +197,7 @@
      <string>+</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="nizej">
+   <widget class="QPushButton" name="down_button">
     <property name="geometry">
      <rect>
       <x>80</x>

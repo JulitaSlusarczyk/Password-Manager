@@ -23,16 +23,16 @@ public slots:
     void closeEvent(QCloseEvent *e);
 
 private slots:
-    void on_dodaj_clicked();
     void on_zapisz_clicked();
-    void on_wyzej_clicked();
-    void on_nizej_clicked();
-    void on_lista_hasel_itemSelectionChanged();
+    void on_up_button_clicked();
+    void on_down_button_clicked();
     void on_edit_button_clicked();
     void on_random_pwrd_clicked();
     void on_show_pwrd_clicked();
     void on_delete_one_clicked();
     void on_delete_all_clicked();
+    void on_sites_list_itemSelectionChanged();
+    void on_add_button_clicked();
 
 private:
     Ui::MainWindow *ui;

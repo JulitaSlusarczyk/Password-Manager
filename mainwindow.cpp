@@ -26,8 +26,13 @@ MainWindow::MainWindow(QWidget *parent) :
     load();
     load2();
     load3();
+    if(ui->sites_list->count()<=1)
+    {
+        ui->up_button->setEnabled(false);
+        ui->down_button->setEnabled(false);
+    }
     this->setWindowTitle("Password Manager");
-    ui->lista_hasel->setCurrentRow(0);
+    ui->sites_list->setCurrentRow(0);
 }
 
 MainWindow::~MainWindow()
@@ -47,7 +52,7 @@ void MainWindow::load()
         if(readfLine!="")
         {
             sites << readfLine;
-            ui->lista_hasel->addItem(readfLine);
+            ui->sites_list->addItem(readfLine);
         }
     }
     f->close();
@@ -117,7 +122,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
     }
 }
 
-void MainWindow::on_dodaj_clicked()
+void MainWindow::on_add_button_clicked()
 {
     if(ui->witryna->text()=="" || ui->haslo->text()=="")
     {
@@ -126,13 +131,20 @@ void MainWindow::on_dodaj_clicked()
     else
     {
         sites << ui->witryna->text();
-        ui->lista_hasel->addItem(ui->witryna->text());
+        ui->sites_list->addItem(ui->witryna->text());
         passwords << ui->haslo->text();
+        logins << ui->login_line_edit->text();
         ui->witryna->setText("");
         ui->haslo->setText("");
+        ui->login_line_edit->setText("");
         ui->witryna->setFocus();
         edited = true;
         ui->info_label->setText("Added!");
+    }
+    if(ui->sites_list->count()>1)
+    {
+        ui->up_button->setEnabled(true);
+        ui->down_button->setEnabled(true);
     }
 }
 
@@ -156,31 +168,32 @@ char MainWindow::rand_pwrd()
 
 void MainWindow::on_delete_one_clicked()
 {
-    foreach (QListWidgetItem *item, ui->lista_hasel->selectedItems())
+    foreach (QListWidgetItem *item, ui->sites_list->selectedItems())
         delete item;
-    int er = ui->lista_hasel->currentRow();
-    sites.removeOne(sites[ui->lista_hasel->currentRow()]);
-    logins.removeOne(passwords[ui->lista_hasel->currentRow()]);
-    passwords.removeOne(passwords[ui->lista_hasel->currentRow()]);
+    sites.removeOne(sites[ui->sites_list->currentRow()]);
+    logins.removeOne(passwords[ui->sites_list->currentRow()]);
+    passwords.removeOne(passwords[ui->sites_list->currentRow()]);
     ui->info_label->setText("Deleted!");
     edited = true;
 }
 
 void MainWindow::on_delete_all_clicked()
 {
-    ui->lista_hasel->clear();
+    ui->sites_list->clear();
     sites.clear();
     passwords.clear();
+    logins.clear();
     ui->info_label->setText("Deleted!");
     edited = true;
 }
 
 void MainWindow::on_edit_button_clicked()
 {
-    int ak = ui->lista_hasel->currentRow();
-    if(ui->edit_pwrd->text()!="")
+    int actual_row_list = ui->sites_list->currentRow();
+    if(ui->edit_pwrd->text()!="" && ui->edit_login->text()!="")
     {
-        passwords[ak] = ui->edit_pwrd->text();
+        passwords[actual_row_list] = ui->edit_pwrd->text();
+        logins[actual_row_list] = ui->edit_login->text();
         ui->info_label->setText("Edited!");
         edited = true;
     }
@@ -190,8 +203,8 @@ void MainWindow::on_show_pwrd_clicked()
 {
     if(ui->show_pwrd->text()=="Show password")
     {
-        int re = ui->lista_hasel->currentRow();
-        ui->edit_pwrd->setText(passwords[re]);
+        int actual_row_list = ui->sites_list->currentRow();
+        ui->edit_pwrd->setText(passwords[actual_row_list]);
         ui->show_pwrd->setText("Hide password");
     }
     else
@@ -240,43 +253,43 @@ void MainWindow::on_zapisz_clicked()
 }
 
 
-void MainWindow::on_wyzej_clicked()
+void MainWindow::on_up_button_clicked()
 {
-    int rer = ui->lista_hasel->currentRow();
+    int rer = ui->sites_list->currentRow();
     if(rer!=0)
     {
         sites.swap(rer,rer-1);
         passwords.swap(rer,rer-1);
-        ui->lista_hasel->clear();
+        ui->sites_list->clear();
         for(int i; i<sites.size();i++)
         {
-            ui->lista_hasel->addItem(sites[i]);
+            ui->sites_list->addItem(sites[i]);
         }
-        ui->lista_hasel->setCurrentRow(rer-1);
+        ui->sites_list->setCurrentRow(rer-1);
         edited = true;
     }
 }
 
-void MainWindow::on_nizej_clicked()
+void MainWindow::on_down_button_clicked()
 {
-    int rer = ui->lista_hasel->currentRow();
-    if(rer!=sites.size()-1)
+    int actual_row_list = ui->sites_list->currentRow();
+    if(actual_row_list!=sites.size()-1)
     {
-        sites.swap(rer,rer+1);
-        passwords.swap(rer,rer+1);
-        ui->lista_hasel->clear();
+        sites.swap(actual_row_list,actual_row_list+1);
+        passwords.swap(actual_row_list,actual_row_list+1);
+        ui->sites_list->clear();
         for(int i; i<sites.size();i++)
         {
-            ui->lista_hasel->addItem(sites[i]);
+            ui->sites_list->addItem(sites[i]);
         }
-        ui->lista_hasel->setCurrentRow(rer+1);
+        ui->sites_list->setCurrentRow(actual_row_list+1);
         edited = true;
     }
 }
 
-void MainWindow::on_lista_hasel_itemSelectionChanged()
+void MainWindow::on_sites_list_itemSelectionChanged()
 {
-    ui->edit_login->setText(logins[ui->lista_hasel->currentRow()]);
+    ui->edit_login->setText(logins[ui->sites_list->currentRow()]);
     ui->edit_pwrd->setText("");
     ui->show_pwrd->setText("Show password");
     ui->info2_label->setText("");
